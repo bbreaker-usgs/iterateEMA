@@ -7,32 +7,38 @@ Overview
 This script was developed to evaluate trends in sequential runs of the Expected Moments Algorithm (EMA) on chunks of peak-flow data to evaluate changes in the 2-percent, 1-percent, and 0.2-percent annual exceedance probability (AEP) as peak-flow values are added over time.
 
 ``` r
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load(dataRetrieval, dplyr, lmomco, DT, ggplot2, smwrBase, scales, gtable, grid, gridExtra)
+# the working directory must be set to the location of the PeakfqSA installation
+setwd("C:/.../PeakfqSA")
 
-setwd("C:/Users/bbreaker/Documents/PeakfqSA")
-
+# USGS streamflow-gaging station site number
 site <- "07069500"
 
-pkFile <- readNWISpeak(site, convertType = FALSE)
+# get the peak-flow file
+pkFile <- dataRetrieval::readNWISpeak(site, convertType = FALSE)
 
+# change the -00 to -01 on the historic peak in the file
 pkFile[1,3] <- "1915-08-01"
 
+# convert the character column peak_dt to class Date
 pkFile$peak_dt <- as.Date(pkFile$peak_dt, format = "%Y-%m-%d")
 
+# add the H, for a historic peak
 pkFile[1,6] <- "H"
 
-pkPath <- "C:/Users/bbreaker/Documents/PeakfqSA"
+# add the path to the location of the PeakfqSA installation
+pkPath <- "C:/.../PeakfqSA"
 
+# run the iterateEMA function
 emaComp <- iterateEMA(pkFile = pkFile, pkPath = pkPath, beginYrH = 1915, beginYr = 1937, endYr = 2014, threshold = 125000, 
                       skewOpt = "WEIGHTED", genSkew = -0.17, skewSD = 0.348)
 
-#DT::datatable(emaComp, rownames = FALSE, options = list(scrollX='400px'))
-
+# change peak values to numeric
 pkFile$peak_va <- as.numeric(pkFile$peak_va)
 
-pkFile$wYear <- as.numeric(as.character(waterYear(pkFile$peak_dt)))
+# add the water year as a numeric value
+pkFile$wYear <- as.numeric(as.character(smwrBase::waterYear(pkFile$peak_dt)))
 
+# plot the 0.2-percent AEPs and confidence intervals
 p1 <- ggplot() +
   geom_point(data = pkFile, aes(x = wYear, y = peak_va), 
              alpha = 1, fill = "red", pch = 21, size = 3) +
@@ -45,6 +51,7 @@ p1 <- ggplot() +
   labs(x = "Year", y = expression(atop("Annual peak streamflow,", paste("in ft"^"3","/s")))) +
   theme_USGS()
 
+# plot the 1-percent AEPs and confidence intervals
 p2 <- ggplot() +
   geom_point(data = pkFile, aes(x = wYear, y = peak_va), 
              alpha = 1, fill = "red", pch = 21, size = 3) +
@@ -57,6 +64,7 @@ p2 <- ggplot() +
   labs(x = "Year", y = expression(atop("Annual peak streamflow,", paste("in ft"^"3","/s")))) +
   theme_USGS()
 
+# plot the 2-percent AEPs and confidence intervals
 p3 <- ggplot() +
   geom_point(data = pkFile, aes(x = wYear, y = peak_va), 
              alpha = 1, fill = "red", pch = 21, size = 3) +
