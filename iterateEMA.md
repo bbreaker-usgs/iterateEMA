@@ -72,4 +72,4 @@ p3 <- ggplot() +
 drawTicks3(p1, p2, p3)
 ```
 
-![](iterateEMAforGH_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](iterateEMA_files/figure-markdown_github/unnamed-chunk-1-1.png)
