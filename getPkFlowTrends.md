@@ -4,7 +4,7 @@ Peak-flow Trend Analyses
 Overview
 ========
 
-This script was developed to demonstarte some functions developed to analyze trends in peak-flows at several U.S. Geological Survey (USGS) streamflow gaging stations in Arkansas.
+This script was developed to demonstrate some functions developed to analyze trends in peak flows at several U.S. Geological Survey (USGS) streamflow-gaging stations in Arkansas.
 
 Map the sites
 -------------
