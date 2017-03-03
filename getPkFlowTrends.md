@@ -58,19 +58,14 @@ library(doParallel); detectCores()
 
 ``` r
 # designate the number of cores to use
-cl <- makePSOCKcluster(detectCores() - 7)
+cl <- makePSOCKcluster(detectCores() - 4)
 
 # get the core cluster
 clusterEvalQ(cl, library(foreach)); registerDoParallel(cl)
-```
 
-    ## [[1]]
-    ## [1] "foreach"   "stats"     "graphics"  "grDevices" "utils"     "datasets" 
-    ## [7] "methods"   "base"
-
-``` r
 # run the function in parallel across 4 cores
-pkTrends <- foreach(j = 1:length(siteIDs), .combine = dplyr::bind_rows, .packages = c("dplyr", "dataRetrieval", "Kendall", "smwrBase")) %dopar%
+pkTrends <- foreach(j = 1:length(siteIDs), .combine = dplyr::bind_rows, 
+  .packages = c("dplyr", "dataRetrieval", "Kendall", "smwrBase")) %dopar%
   (pkKendallTest(site = siteIDs[j]))
 
 # stop the cluster
