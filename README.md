@@ -167,4 +167,4 @@ p4 <- ggplot() +
 drawTicks4(p1, p2, p3, p4)
 ```
 
-![](extra/fig1.png)
+![](extra/figEMA.png)
