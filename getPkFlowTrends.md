@@ -41,7 +41,7 @@ map <- ggmap(baseMap) +
 drawTicks(map)
 ```
 
-![](getPkFlowTrends_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](extra/unnamed-chunk-1-1.png)
 
 Run the Kendall Test on the Peak Flows
 --------------------------------------
