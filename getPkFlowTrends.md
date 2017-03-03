@@ -46,7 +46,7 @@ drawTicks(map)
 Run the Kendall Test on the Peak Flows
 --------------------------------------
 
-Use the `{r}pkKendallTest()` function to obtain the trend test results.
+Use the `pkKendallTest()` function to obtain the trend test results.
 
 ``` r
 # apply the function to the vector of site IDs in parallel
