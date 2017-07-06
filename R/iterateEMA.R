@@ -13,10 +13,10 @@ iterateEMA <- function(pkFile, pkPath, beginYrH = NULL, beginYr, endYr, threshol
   
   endYrs <- seq(as.numeric(endYr), as.numeric(beginYr) + 10, -1)
   
-  newDF <- data.frame(endYear = as.numeric(), Q50 = as.numeric(), upperCI50 = as.numeric(), 
-                      lowerCI50 = as.numeric(), Q100 = as.numeric(), upperCI100 = as.numeric(), 
-                      lowerCI100 = as.numeric(), Q500 = as.numeric(), upperCI500 = as.numeric(), 
-                      lowerCI500 = as.numeric())
+  newDF <- data.frame(endYear = as.numeric(), Q50 = as.numeric(), lowerCI50 = as.numeric(), 
+                      upperCI50 = as.numeric(), Q100 = as.numeric(), lowerCI100 = as.numeric(), 
+                      upperCI100 = as.numeric(), Q500 = as.numeric(), lowerCI500 = as.numeric(), 
+                      upperCI500 = as.numeric())
   
   topOut <- "                                  EMA FREQUENCY ESTIMATES"
   
