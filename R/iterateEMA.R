@@ -77,10 +77,10 @@ iterateEMA <- function(pkFile, pkPath, beginYrH = NULL, beginYr, endYr, threshol
     
     newTbl <- read.table(text = newTbl)
     
-    dfEMA <- data.frame(endYear = endYrs[i], Q50 = newTbl[26,3], upperCI50 = newTbl[26,6], 
-                        lowerCI50 = newTbl[26,7], Q100 = newTbl[27,3], upperCI100 = newTbl[27,6], 
-                        lowerCI100 = newTbl[27,7], Q500 = newTbl[29,3], upperCI500 = newTbl[29,6], 
-                        lowerCI500 = newTbl[29,7], stringsAsFactors = FALSE)
+    dfEMA <- data.frame(endYear = endYrs[i], Q50 = newTbl[26,3], lowerCI50 = newTbl[26,6], 
+                        upperCI50 = newTbl[26,7], Q100 = newTbl[27,3], lowerCI100 = newTbl[27,6], 
+                        upperCI100 = newTbl[27,7], Q500 = newTbl[29,3], lowerCI500 = newTbl[29,6], 
+                        upperCI500 = newTbl[29,7], stringsAsFactors = FALSE)
     
     newDF <- dplyr::bind_rows(newDF, dfEMA); rm(dfEMA)
     
