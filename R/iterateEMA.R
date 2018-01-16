@@ -9,7 +9,18 @@
 # In order for the function to work, the working directory must be set to the location 
 # of PeakfqSA0998.exe
 
-iterateEMA <- function(pkFile, pkPath, beginYrH = NULL, beginYr, endYr, threshold = NULL, skewOpt, genSkew, skewSD) {
+waterYear <- function (x, numeric = FALSE) {
+  x <- as.POSIXlt(x)
+  yr <- x$year + 1900L
+  mn <- x$mon + 1L
+  yr <- yr + ifelse(mn < 10L, 0L, 1L)
+  if (numeric) 
+    return(yr)
+  ordered(yr)
+}
+
+iterateEMA <- function(pkFile, pkPath, beginYrH = NULL, missbeginYr = NULL, missEndYr = NULL, 
+                       beginYr, endYr, threshold = NULL, skewOpt, genSkew, skewSD) {
   
   endYrs <- seq(as.numeric(endYr), as.numeric(beginYr) + 10, -1)
   
@@ -22,7 +33,27 @@ iterateEMA <- function(pkFile, pkPath, beginYrH = NULL, beginYr, endYr, threshol
   
   for(i in seq(1, length(endYrs), 1)) {
     
-    if(!is.null(beginYrH)) {
+    if (!is.null(beginYrH)) {
+      
+      for (j in 1:length(beginYrH)) {
+        
+        hdr <- c(paste0("I pkInput.spc"),
+                 "0 something.out",
+                 "LOTHRESH         0.0",
+                 paste0("SKEWOPT          ", skewOpt),
+                 paste0("GENSKEW          ", genSkew),
+                 paste0("SKEWSD           ", skewSD),
+                 paste0("BEGYEAR          ", beginYr),
+                 paste0("ENDYEAR          ", as.character(endYrs[i])),
+                 "GAGEBASE            0",
+                 paste0("THRESHOLD        ", as.character(beginYrH[j]), " ",
+                        as.character(as.numeric(beginYr[j]) - 1), " ", 
+                        as.character(threshold[j]), " 1.d99"),
+                 paste0("THRESHOLD        ", as.character(beginYr), " ", 
+                        as.character(endYrs[i]), " 0.000 1.d99"))
+      }
+      
+    } else if (is.null(beginYrH)) {
       hdr <- c(paste0("I pkInput.spc"),
                "0 something.out",
                "LOTHRESH         0.0",
@@ -32,25 +63,19 @@ iterateEMA <- function(pkFile, pkPath, beginYrH = NULL, beginYr, endYr, threshol
                paste0("BEGYEAR          ", beginYr),
                paste0("ENDYEAR          ", as.character(endYrs[i])),
                "GAGEBASE            0",
-               paste0("THRESHOLD        ", as.character(beginYrH), " ",
-                      as.character(as.numeric(beginYr) - 1), " ", 
-                      as.character(threshold), " 1.d99"),
                paste0("THRESHOLD        ", as.character(beginYr), " ", 
                       as.character(endYrs[i]), " 0.000 1.d99"))
-    }
-    
-    else if(is.null(beginYrH)) {
-      hdr <- c(paste0("I pkInput.spc"),
-               "0 something.out",
-               "LOTHRESH         0.0",
-               paste0("SKEWOPT          ", skewOpt),
-               paste0("GENSKEW          ", genSkew),
-               paste0("SKEWSD           ", skewSD),
-               paste0("BEGYEAR          ", beginYr),
-               paste0("ENDYEAR          ", as.character(endYrs[i])),
-               "GAGEBASE            0",
-               paste0("THRESHOLD        ", as.character(beginYr), " ", 
-                      as.character(endYrs[i]), " 0.000 1.d99"))
+      
+    } else if (!is.null(missingPeriod)) {
+      
+      for (k in 1:length(missbeginYr)) {
+        
+        hdr <- c(hdr,
+                 paste0("THRESHOLD        ", as.character(missbeginYr[k]), " ", 
+                        as.character(missendYr[k]), " 1.d99 1.d99"))
+        
+      }
+      
     }
     
     pkFile2 <- pkFile[format(pkFile$peak_dt, "%Y") <= endYrs[i],]
@@ -93,4 +118,3 @@ iterateEMA <- function(pkFile, pkPath, beginYrH = NULL, beginYr, endYr, threshol
   return(newDF)
   
 }
-
