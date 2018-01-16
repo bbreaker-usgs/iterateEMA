@@ -68,11 +68,11 @@ iterateEMA <- function(pkFile, pkPath, beginYrH = NULL, missbeginYr = NULL, miss
       
     } else if (!is.null(missingPeriod)) {
       
-      for (k in 1:length(missbeginYr)) {
+      for (k in 1:length(missBeginYr)) {
         
         hdr <- c(hdr,
-                 paste0("THRESHOLD        ", as.character(missbeginYr[k]), " ", 
-                        as.character(missendYr[k]), " 1.d99 1.d99"))
+                 paste0("THRESHOLD        ", as.character(missBeginYr[k]), " ", 
+                        as.character(missEndYr[k]), " 1.d99 1.d99"))
         
       }
       
