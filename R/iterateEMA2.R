@@ -19,8 +19,8 @@ waterYear <- function (x, numeric = FALSE) {
   ordered(yr)
 }
 
-iterateEMA2 <- function(pkDates, pkFlows, pkCodes, pkPath, beginYrH = NULL, missbeginYr = NULL, missEndYr = NULL, 
-                       beginYr, endYr, threshold = NULL, skewOpt, genSkew, skewSE) {
+iterateEMA2 <- function(pkDates, pkFlows, pkCodes, pkPath, beginYrH = NULL, threshbeginYr = NULL, threshEndYr = NULL, 
+                        beginYr, endYr, thresholdH = NULL, thresholdM = NULL, skewOpt, genSkew, skewSE) {
   
   endYrs <- seq(as.numeric(endYr), as.numeric(beginYr) + 10, -1)
   
@@ -38,27 +38,54 @@ iterateEMA2 <- function(pkDates, pkFlows, pkCodes, pkPath, beginYrH = NULL, miss
   
   for(i in seq(1, length(endYrs), 1)) {
     
-    if (!is.null(beginYrH)) {
+    if (!is.null(threshbeginYr)) {
       
-      for (j in 1:length(beginYrH)) {
+      for (j in 1:length(threshbeginYr)) {
         
-        hdr <- c(paste0("I pkInput.spc"),
-                 "0 something.out",
-                 "LOTHRESH         0.0",
-                 paste0("SKEWOPT          ", skewOpt),
-                 paste0("GENSKEW          ", genSkew),
-                 paste0("SKEWSD           ", skewSE),
-                 paste0("BEGYEAR          ", beginYr),
-                 paste0("ENDYEAR          ", as.character(endYrs[i])),
-                 "GAGEBASE            0",
-                 paste0("THRESHOLD        ", as.character(beginYrH[j]), " ",
-                        as.character(as.numeric(beginYr[j]) - 1), " ", 
-                        as.character(threshold[j]), " 1.d99"),
-                 paste0("THRESHOLD        ", as.character(beginYr), " ", 
-                        as.character(endYrs[i]), " 0.000 1.d99"))
+        if (!is.null(beginYrH)) {
+          
+          hdr <- c(paste0("I pkInput.spc"),
+                   "0 something.out",
+                   "LOTHRESH         0.0",
+                   paste0("SKEWOPT          ", skewOpt),
+                   paste0("GENSKEW          ", genSkew),
+                   paste0("SKEWSD           ", skewSE),
+                   paste0("BEGYEAR          ", beginYr),
+                   paste0("ENDYEAR          ", as.character(endYrs[i])),
+                   "GAGEBASE            0",
+                   paste0("THRESHOLD        ", as.character(beginYrH), " ",
+                          as.character(as.numeric(beginYr) - 1), " ", 
+                          as.character(threshold[j]), " 1.d99"),
+                   paste0("THRESHOLD        ", as.character(beginYr), " ", 
+                          as.character(endYrs[i]), " 0.000 1.d99"), 
+                   paste0("THRESHOLD        ", as.character(threshbeginYr[j]), " ",
+                          as.character(threshEndYr[j]), " ", 
+                          as.character(thresholdM[j])))
+          
+        } else {
+          
+          hdr <- c(paste0("I pkInput.spc"),
+                   "0 something.out",
+                   "LOTHRESH         0.0",
+                   paste0("SKEWOPT          ", skewOpt),
+                   paste0("GENSKEW          ", genSkew),
+                   paste0("SKEWSD           ", skewSE),
+                   paste0("BEGYEAR          ", beginYr),
+                   paste0("ENDYEAR          ", as.character(endYrs[i])),
+                   "GAGEBASE            0",
+                   paste0("THRESHOLD        ", as.character(beginYr), " ", 
+                          as.character(endYrs[i]), " 0.000 1.d99"), 
+                   paste0("THRESHOLD        ", as.character(threshbeginYr[j]), " ",
+                          as.character(threshEndYr[j]), " ", 
+                          as.character(thresholdM[j])))
+          
+          
+        }
+        
       }
       
-    } else if (is.null(beginYrH)) {
+    } else if (!is.null(beginYrH)) {
+      
       hdr <- c(paste0("I pkInput.spc"),
                "0 something.out",
                "LOTHRESH         0.0",
@@ -68,20 +95,30 @@ iterateEMA2 <- function(pkDates, pkFlows, pkCodes, pkPath, beginYrH = NULL, miss
                paste0("BEGYEAR          ", beginYr),
                paste0("ENDYEAR          ", as.character(endYrs[i])),
                "GAGEBASE            0",
+               paste0("THRESHOLD        ", as.character(beginYrH), " ",
+                      as.character(as.numeric(beginYr) - 1), " ", 
+                      as.character(threshold[j]), " 1.d99"),
                paste0("THRESHOLD        ", as.character(beginYr), " ", 
                       as.character(endYrs[i]), " 0.000 1.d99"))
       
-    } else if (!is.null(missingPeriod)) {
+    } else { 
       
-      for (k in 1:length(missBeginYr)) {
-        
-        hdr <- c(hdr,
-                 paste0("THRESHOLD        ", as.character(missBeginYr[k]), " ", 
-                        as.character(missEndYr[k]), " 1.d99 1.d99"))
-        
+      hdr <- c(paste0("I pkInput.spc"),
+               "0 something.out",
+               "LOTHRESH         0.0",
+               paste0("SKEWOPT          ", skewOpt),
+               paste0("GENSKEW          ", genSkew),
+               paste0("SKEWSD           ", skewSE),
+               paste0("BEGYEAR          ", beginYr),
+               paste0("ENDYEAR          ", as.character(endYrs[i])),
+               "GAGEBASE            0",
+               paste0("THRESHOLD        ", as.character(beginYrH), " ",
+                      as.character(as.numeric(beginYr) - 1), " ", 
+                      as.character(threshold[j]), " 1.d99"),
+               paste0("THRESHOLD        ", as.character(beginYr), " ", 
+                      as.character(endYrs[i]), " 0.000 1.d99"))
+      
       }
-      
-    }
     
     pkFile <- data.frame(pkDates, pkFlows = round(pkFlows, 0), pkCodes)
     
